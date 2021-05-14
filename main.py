@@ -50,7 +50,21 @@ class StartGame:
         pass
 
     def check_around(self, coords):
-        pass
+        around = np.array(
+            [
+                [-1, -1], [0, -1], [1, -1],
+                [-1,  0],          [1,  0],
+                [-1,  1], [0,  1], [1,  1]
+            ]
+        )
+        x, y = coords
+        for i in around:
+            pos_y = y + i[1] - self.offset
+            pos_x = x + i[0] - self.offset
+            print(
+                f"Position: [\t{i[0]},\t{i[1]}\t];\tActual Coords: [{pos_x}, {pos_y}];\tValue: {str(self.board[pos_y][pos_x])[0]}")
+
+        self.show_position(coords)
 
     def valid_position(self, new_coords: tuple) -> bool:
         """Checks if a move is landing on a valid position
@@ -90,10 +104,7 @@ class StartGame:
                     print(str(value_x)[0], end=" ")
             print()
 
-    def check_around(self, coords) -> Set:
-        pass
-
 
 game = StartGame(PLAY_WITH_OFFSET)
 system(CLEAR_SCREEN_COMMAND)
-game.show_position((2, 2))
+game.check_around((3, 3))
