@@ -10,7 +10,8 @@
     4th Year, 1st Semester
     2021
 
-    The code in this repository is open source and free to use to your liking. It was used to complete a project with Deep Reinforcement Learning. 
+    The code in this repository is open source and free to use to your liking. 
+    It was used to complete a project with Deep Reinforcement Learning. 
 
 ## Project Description
 
