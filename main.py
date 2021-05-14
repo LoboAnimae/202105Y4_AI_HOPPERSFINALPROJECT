@@ -1,25 +1,29 @@
+from typing import Set
 import numpy as np
 from os import system, name
+
 CLEAR_SCREEN_COMMAND = 'cls' if name == 'nt' else 'clear'
+PLAY_WITH_OFFSET = True
 
 
 class colors:
     reset = '\033[0m'
-    
+
     class fg:
         red = '\033[31m'
 
+
 class StartGame:
-    def __init__(self) -> None:
+    def __init__(self, play_with_offset) -> None:
+        self.offset = 1 if play_with_offset else 0
         self.size = 10
         self.board = np.zeros((10, 10))
         self.fill_rows()
         self.colors = colors()
 
-    
     def fill_rows(self) -> bool:
         """ Fills the rows of the board in a symmetrical manner
-        
+
         """
         recurrence = 5
         offset = 0
@@ -34,8 +38,6 @@ class StartGame:
 
         return True
 
-
-
     def __repr__(self) -> str:
         current_board = ""
         for y in self.board:
@@ -47,28 +49,51 @@ class StartGame:
     def make_move(self) -> bool:
         pass
 
-    def valid_position(self, new_coords=(0, 0)) -> bool:
+    def check_around(self, coords):
+        pass
+
+    def valid_position(self, new_coords: tuple) -> bool:
+        """Checks if a move is landing on a valid position
+
+        Parameters: 
+            new_coords (tuple): The coordinates for the move
+
+        Returns:
+            bool: False if invalid. True if valid. 
+
+        """
         x, y = new_coords
-        if x < 0 or y < 0:
+        min_allowed_value = self.offset
+        max_allowed_value = 10 - self.offset
+
+        # If the value is outside of the board on the left or up, return false
+        if x < min_allowed_value or y < min_allowed_value:
             return False
-        if x > 9 or y > 9:
+        # If the value is outside of the board on the right or down sides, return false
+        if x > max_allowed_value or y > max_allowed_value:
             return False
+
+        # If the position is taken by any piece, return false
         if self.board[y][x] != 0:
             print("Error: Position taken by %d" % self.board[y][x])
             return False
-        print("")
+        return True
 
     def show_position(self, coords):
+        coords = (coords[0] - self.offset, coords[1] - self.offset)
         for count_y, value_y in enumerate(self.board):
             for count_x, value_x in enumerate(value_y):
                 if (count_x, count_y) == coords:
-                    print(self.colors.fg.red + str(value_x)[0] + self.colors.reset, end=" ")
+                    print(self.colors.fg.red + str(value_x)
+                          [0] + self.colors.reset, end=" ")
                 else:
                     print(str(value_x)[0], end=" ")
             print()
 
+    def check_around(self, coords) -> Set:
+        pass
 
 
-game = StartGame()
+game = StartGame(PLAY_WITH_OFFSET)
 system(CLEAR_SCREEN_COMMAND)
-game.show_position((2, 1))
+game.show_position((2, 2))
