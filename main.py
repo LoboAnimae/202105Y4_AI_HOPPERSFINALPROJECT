@@ -1,16 +1,6 @@
-from typing import Set
 import numpy as np
-from os import system, name
-
-CLEAR_SCREEN_COMMAND = 'cls' if name == 'nt' else 'clear'
-PLAY_WITH_OFFSET = True
-
-
-class colors:
-    reset = '\033[0m'
-
-    class fg:
-        red = '\033[31m'
+from os import system
+from constants import GameParameters, colors
 
 
 class StartGame:
@@ -23,7 +13,6 @@ class StartGame:
 
     def fill_rows(self) -> bool:
         """ Fills the rows of the board in a symmetrical manner
-
         """
         recurrence = 5
         offset = 0
@@ -40,7 +29,17 @@ class StartGame:
 
     def __repr__(self) -> str:
         current_board = ""
-        for y in self.board:
+        current_board += "\t"
+        for i in range(0, 10):
+            current_board += f"{i + self.offset} "
+        current_board += "\n"
+        current_board += "\t"
+        for i in range(0, len(current_board) - 1):
+            current_board += "="
+        current_board += "\n"
+
+        for index, y in enumerate(self.board):
+            current_board += f"{index + self.offset}\t|"
             for x in y:
                 current_board += str(x)[0] + " "
             current_board += "\n"
@@ -93,18 +92,45 @@ class StartGame:
             return False
         return True
 
+    def show_gridline_section(self, variant=1):
+        if variant == 1:
+            for i in range(0, 20):
+                index = "{}{}".format('\t' if i == 0 else '', '=')
+                end = "{}".format('' if i != 20 - 1 else '\n')
+                print(index, end=end)
+        else:
+            for i in range(0, 10):
+                index = "{}{}".format('\t' if i == 0 else '', i + self.offset)
+                end = "{}".format(' ' if i != 10 - 1 else '\n')
+                print(index, end=end)
+
+    def print_grid(self, inverse=False):
+        if not inverse:
+            self.show_gridline_section(2)
+            self.show_gridline_section()
+        else:
+            self.show_gridline_section()
+            self.show_gridline_section(2)
+
     def show_position(self, coords):
+        self.print_grid()
+
         coords = (coords[0] - self.offset, coords[1] - self.offset)
         for count_y, value_y in enumerate(self.board):
+            print(count_y + self.offset,
+                  end=f"{' ' if len(str(count_y + self.offset)) == 1 else ''}|\t")
             for count_x, value_x in enumerate(value_y):
                 if (count_x, count_y) == coords:
                     print(self.colors.fg.red + str(value_x)
                           [0] + self.colors.reset, end=" ")
                 else:
                     print(str(value_x)[0], end=" ")
-            print()
+            print(f"\t|{count_y + self.offset}")
+
+        self.print_grid(inverse=True)
 
 
-game = StartGame(PLAY_WITH_OFFSET)
-system(CLEAR_SCREEN_COMMAND)
+game = StartGame(GameParameters.PLAY_WITH_OFFSET)
+system(GameParameters.CLEAR_SCREEN_COMMAND)
 game.check_around((3, 3))
+# print(game)
